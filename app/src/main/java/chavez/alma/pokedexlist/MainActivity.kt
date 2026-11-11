@@ -8,10 +8,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import chavez.alma.pokedexlist.navigation.MyApp
+import chavez.alma.pokedexlist.model.data.Users
+import chavez.alma.pokedexlist.navigation.AppNavigation
 import chavez.alma.pokedexlist.ui.theme.PokedexListTheme
-import com.tu_paquete.pokedexlist.model.data.Users
-import com.tu_paquete.pokedexlist.viewmodel.UserViewModel
+import chavez.alma.pokedexlist.viewmodel.UserViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                 val userViewModel = remember { UserViewModel(users) }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MyApp(
+                    AppNavigation(
                         innerPadding = innerPadding,
                         userViewModel = userViewModel
                     )

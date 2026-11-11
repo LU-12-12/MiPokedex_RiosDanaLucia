@@ -1,7 +1,7 @@
-package com.tu_paquete.pokedexlist.model.data
+package chavez.alma.pokedexlist.model.data
 
 import android.content.Context
-import com.tu_paquete.pokedexlist.model.preferences.UserPreferences
+import chavez.alma.pokedexlist.model.preferences.UserPreferences
 
 class Users(private val context: Context) {
 

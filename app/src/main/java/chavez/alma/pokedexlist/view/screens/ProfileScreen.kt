@@ -1,67 +1,60 @@
 package chavez.alma.pokedexlist.view.screens
 
-import android.graphics.Paint
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import chavez.alma.pokedexlist.model.data.UserViewModel
-import chavez.alma.pokedexlist.ui.theme.Pink40
-import chavez.alma.pokedexlist.ui.theme.Typography
+import androidx.navigation.NavController
+import chavez.alma.pokedexlist.viewmodel.PokemonViewModel
 
 @Composable
 fun ProfileScreen(
-    innerPadding: PaddingValues,
-    userViewModel: UserViewModel = viewModel()
+    navController: NavController,
+    pokemonViewModel: PokemonViewModel
 ) {
-    val nombre="Gamma"
-        /*
-        if (userViewModel.currentUser != null) {
-        "${userViewModel.currentUser!!.name}"
-    } else {
-        "Nombre Usuario"
-    }
-    */
-    val mail= "Gamma@mail.com"
+    val companionState by pokemonViewModel.companionState.collectAsState()
 
-    /*
-    if (userViewModel.currentUser != null) {
-                "${userViewModel.currentUser!!.email}"
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Perfil de Entrenador", fontSize = 22.sp)
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            val companion = companionState.companionPokemon
+            if (companion != null) {
+                Image(
+                    painter = painterResource(id = companion.image),
+                    contentDescription = companion.name,
+                    modifier = Modifier.size(150.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = companion.name, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Tiene ${companionState.daysTogether} días de ser tu compañero",
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             } else {
-                "usuario@mail.com"
+                Text(
+                    text = "Aún no has elegido un compañero",
+                    fontSize = 16.sp
+                )
             }
-    */
-
-    Column(Modifier.fillMaxSize()
-        .padding(innerPadding)
-        .padding(15.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            nombre, style = Typography.titleLarge, color = Pink40
-        )
-        Text(
-            mail, style = Typography.displayLarge, color = Pink40
-        )
-
-        Spacer(Modifier.size(50.dp))
-        Text("Mi compañero", style = Typography.titleLarge)
+        }
     }
-
-
-}
-
-
-@Preview
-@Composable
-fun previewProfileScreen() {
-    ProfileScreen(PaddingValues(20.dp))
 }

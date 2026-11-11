@@ -1,83 +1,79 @@
 package chavez.alma.pokedexlist.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import chavez.alma.pokedexlist.model.data.UserViewModel
-import chavez.alma.pokedexlist.model.data.getPokemonByNumber
+import androidx.navigation.navArgument
 import chavez.alma.pokedexlist.view.screens.LoginScreen
 import chavez.alma.pokedexlist.view.screens.MenuPokedexScreen
 import chavez.alma.pokedexlist.view.screens.PokemonDetailScreen
 import chavez.alma.pokedexlist.view.screens.PokemonHuntScreen
-import kotlinx.serialization.Serializable
-
-// Definición de las rutas seguras (Type-Safe Routes)
-@Serializable
-object Login
-
-@Serializable
-object PokemonList
-
-@Serializable
-data class PokemonDetail(val pokemon: Int)
-
-@Serializable
-object PokemonHunt
+import chavez.alma.pokedexlist.view.screens.ProfileScreen
+import chavez.alma.pokedexlist.viewmodel.PokemonViewModel
+import chavez.alma.pokedexlist.viewmodel.UserViewModel
 
 @Composable
-fun MyApp(
+fun AppNavigation(
     innerPadding: PaddingValues,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    pokemonViewModel: PokemonViewModel = viewModel()
 ) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Login
+        startDestination = Routes.Login.route,
+        modifier = Modifier.padding(innerPadding)
     ) {
-        composable<Login> {
+        composable(Routes.Login.route) {
             LoginScreen(
-                innerPadding = innerPadding,
-                navigateToMenu = {
-                    navController.navigate(PokemonList) {
-                        // Limpia Login del historial para no regresar al presionar atrás
-                        popUpTo<Login> { inclusive = true }
-                    }
-                },
-                userViewModel = userViewModel
-            )
-        }
-
-        composable<PokemonList> {
-            MenuPokedexScreen(
-                innerPadding = innerPadding,
-                onNavigateToDetail = { id ->
-                    navController.navigate(route = PokemonDetail(id))
-                },
-                onNavigateToHunt = {
-                    navController.navigate(route = PokemonHunt)
-                },
-                onLogout = {
-                    userViewModel.logout()
-                    navController.navigate(Login) {
-                        // Limpia el menú del historial para volver al Login limpiamente
-                        popUpTo<PokemonList> { inclusive = true }
+                userViewModel = userViewModel,
+                onLoginSuccess = {
+                    navController.navigate(Routes.Pokedex.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
                     }
                 }
             )
         }
-
-        composable<PokemonDetail> { backStackEntry ->
-            val detail: PokemonDetail = backStackEntry.toRoute()
-            val pokemon = getPokemonByNumber(detail.pokemon)
-            PokemonDetailScreen(innerPadding = innerPadding, pokemon = pokemon)
+        composable(Routes.Pokedex.route) {
+            MenuPokedexScreen(
+                innerPadding = PaddingValues(),
+                onNavigateToDetail = { pokemonNumber ->
+                    navController.navigate(Routes.Detail.createRoute(pokemonNumber))
+                },
+                onNavigateToHunt = {
+                    navController.navigate(Routes.Hunt.route)
+                }
+            )
         }
-
-        composable<PokemonHunt> {
-            PokemonHuntScreen(innerPadding)
+        composable(
+            route = Routes.Detail.route,
+            arguments = listOf(navArgument("pokemonNumber") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val pokemonNumber = backStackEntry.arguments?.getString("pokemonNumber") ?: ""
+            PokemonDetailScreen(
+                pokemonNumber = pokemonNumber,
+                pokemonViewModel = pokemonViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.Profile.route) {
+            ProfileScreen(
+                navController = navController,
+                pokemonViewModel = pokemonViewModel
+            )
+        }
+        composable(Routes.Hunt.route) {
+            PokemonHuntScreen(
+                innerPadding = PaddingValues(),
+                viewModel = pokemonViewModel
+            )
         }
     }
 }

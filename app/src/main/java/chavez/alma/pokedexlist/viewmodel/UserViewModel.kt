@@ -1,10 +1,11 @@
-package com.tu_paquete.pokedexlist.viewmodel
+package chavez.alma.pokedexlist.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.tu_paquete.pokedexlist.model.data.Users
+import chavez.alma.pokedexlist.model.data.User
+import chavez.alma.pokedexlist.model.data.Users
 
 class UserViewModel(private val users: Users) : ViewModel() {
 

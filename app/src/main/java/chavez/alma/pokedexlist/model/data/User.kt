@@ -1,4 +1,4 @@
-package com.tu_paquete.pokedexlist.model.data
+package chavez.alma.pokedexlist.model.data
 
 data class User(
     val email: String,

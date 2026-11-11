@@ -1,4 +1,4 @@
-package com.tu_paquete.pokedexlist.ui
+package chavez.alma.pokedexlist.view.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -9,16 +9,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.tu_paquete.pokedexlist.viewmodel.UserViewModel
+import chavez.alma.pokedexlist.viewmodel.UserViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: UserViewModel,
+    userViewModel: UserViewModel,
     onLoginSuccess: () -> Unit
 ) {
     // Si la sesión ya existe, omitir la vista de Login
     LaunchedEffect(Unit) {
-        if (viewModel.isLoggedIn()) {
+        if (userViewModel.isLoggedIn()) {
             onLoginSuccess()
         }
     }
@@ -58,7 +58,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                if (viewModel.login(email, password)) {
+                if (userViewModel.login(email, password)) {
                     onLoginSuccess()
                 }
             },
@@ -67,10 +67,10 @@ fun LoginScreen(
             Text("Iniciar sesión")
         }
 
-        if (viewModel.loginError) {
+        if (userViewModel.loginError) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = viewModel.errorDescription,
+                text = userViewModel.errorDescription,
                 color = Color.Red,
                 fontStyle = FontStyle.Italic
             )
